@@ -3,7 +3,7 @@ import sequelize from '../config/database';
 
 const router = Router();
 
-router.get('/test-db', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const [results] = await sequelize.query("SELECT NOW() AS time");
     // TypeScript workaround for unknown result type
