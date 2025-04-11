@@ -25,6 +25,12 @@ app.use('/api/courses', createCourseRoutes());
 app.use('/api/assignments', createAssignmentRoutes());
 app.use('/api/test-db', testDbRoute); // Add the test-db route
 
+//testinggggg
+app.get('/', (req, res) => {
+  res.send('Server is running!');
+});
+
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', environment: process.env.NODE_ENV });
