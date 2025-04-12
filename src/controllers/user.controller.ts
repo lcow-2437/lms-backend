@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
 import { UserRole } from '../models/user.model';
 import User, { UserAttributes } from '../models/user.model';
+import bcrypt from 'bcryptjs';
 
 // Helper type to exclude password from UserAttributes
 type UserResponse = Omit<UserAttributes, 'password'>;
@@ -46,6 +47,7 @@ export class UserController {
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
       console.log('Login attempt:', { email, password });
       const user = await this.userService.findUserByEmail(email);
       console.log('User found:', user);
