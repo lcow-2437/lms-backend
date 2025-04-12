@@ -17,30 +17,32 @@ export class UserController {
   async register(req: Request, res: Response): Promise<void> {
     try {
       const { email, password, role, firstName, lastName } = req.body;
-
+      console.log('Register attempt:', { email, password, role, firstName, lastName });
       if (!Object.values(UserRole).includes(role)) {
         res.status(400).json({ error: 'Invalid role' });
         return;
       }
-
+      console.log('Register attempt 2:', { email, password, role, firstName, lastName });
       const existingUser = await this.userService.findUserByEmail(email);
       if (existingUser) {
         res.status(400).json({ error: 'Email already in use' });
         return;
       }
-
+ 
       const user = await this.userService.createUser(email, password, role, firstName, lastName);
+      console.log('User created:', user);
       const token = this.userService.generateToken(user);
-
-      res.status(201).json({ 
+      console.log('Token generated:', token);
+      res.status(201).json({
         user: this.toUserResponse(user),
-        token 
+        token
       });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Registration failed' });
     }
   }
+ 
 
   async login(req: Request, res: Response): Promise<void> {
     try {
