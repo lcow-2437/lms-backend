@@ -56,7 +56,7 @@ export class UserController {
         return;
       }
       console.log('Comparing passwords:', { inputPassword: password, storedPassword: user.password });
-      if (password !== user.password) {
+      if (hashedPassword !== user.password) {
         res.status(401).json({ error: 'Invalid credentials' });
         return;
       }
