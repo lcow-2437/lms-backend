@@ -18,7 +18,7 @@ export class UserController {
     try {
       const { email, password, role, firstName, lastName } = req.body;
       console.log('Register attempt:', { email, password, role, firstName, lastName });
-      if (!Object.values(UserRole).includes(role)) {
+      if (role !== UserRole.STUDENT || role !== UserRole.PROFESSOR || role !== UserRole.ADMIN) {
         res.status(400).json({ error: 'Invalid role' });
         return;
       }
@@ -35,7 +35,7 @@ export class UserController {
       console.log('Token generated:', token);
       res.status(201).json({
         user: this.toUserResponse(user),
-        token
+        token: token
       });
     } catch (error) {
       console.error(error);
@@ -43,7 +43,6 @@ export class UserController {
     }
   }
  
-
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
