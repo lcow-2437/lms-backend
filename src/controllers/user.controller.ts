@@ -18,10 +18,10 @@ export class UserController {
     try {
       const { email, password, role, firstName, lastName } = req.body.firstName;
       console.log('Register attempt:', { email, password, role, firstName, lastName });
-      if (role !== "student" || role !== "professor" || role !=="admin") {
-        res.status(400).json({ error: 'Invalid role' });
-        return;
-      }
+      // if (role !== "student" || role !== "professor" || role !=="admin") {
+      //   res.status(400).json({ error: 'Invalid role' });
+      //   return;
+      // }
       console.log('Register attempt 2:', { email, password, role, firstName, lastName });
       const existingUser = await this.userService.findUserByEmail(email);
       if (existingUser) {
