@@ -72,6 +72,7 @@ export class UserController {
   async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
       const users = await this.userService.getAllUsers();
+      console.log("akgefks USERS");
       res.json(users.map(user => this.toUserResponse(user)));
     } catch (error) {
       console.error(error);
