@@ -105,3 +105,4 @@ Course.belongsToMany(User, { through: CourseStudent, as: 'students' });
 User.belongsToMany(Course, { through: CourseStudent, as: 'enrolledCourses' });
 
 export default Course;
+export { CourseStudent };

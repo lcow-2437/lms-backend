@@ -7,8 +7,6 @@ import { createUserRoutes } from './routes/user.routes';
 import { createCourseRoutes } from './routes/course.routes';
 import { createAssignmentRoutes } from './routes/assignment.routes';
 import { createGradeRoutes } from './routes/grade.routes';
-import { createProfileRoutes } from './routes/profile.routes'; // Correct
-// Not './routes/profile' or './routes/profile.routes.js'
 
 dotenv.config();
 
@@ -26,7 +24,6 @@ app.use('/api/users', createUserRoutes());
 app.use('/api/courses', createCourseRoutes());
 app.use('/api/assignments', createAssignmentRoutes());
 app.use('/api/grades', createGradeRoutes());
-app.use('/api/profile', createProfileRoutes());
 
 // Health check
 app.get('/health', (req, res) => {
