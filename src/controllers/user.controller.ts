@@ -47,7 +47,6 @@ export class UserController {
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
       console.log('Login attempt:', { email, password });
       const user = await this.userService.findUserByEmail(email);
       console.log('User found:', user);
@@ -55,8 +54,9 @@ export class UserController {
         res.status(401).json({ error: 'Invalid credentials' });
         return;
       }
-      console.log('Comparing passwords:', { inputPassword: hashedPassword, storedPassword: user.password });
-      if (hashedPassword !== user.password) {
+      console.log('Comparing passwords:', { inputPassword: password, storedPassword: user.password });
+      const isPasswordValid = await this.userService.comparePasswords(password, user.password);
+      if (!isPasswordValid) {
         res.status(401).json({ error: 'Invalid credentials' });
         return;
       }
