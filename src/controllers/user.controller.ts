@@ -18,7 +18,7 @@ export class UserController {
     try {
       const { email, password, role, firstName, lastName } = req.body;
       console.log('Register attempt:', { email, password, role, firstName, lastName });
-      if (role !== UserRole.STUDENT || role !== UserRole.PROFESSOR || role !== UserRole.ADMIN) {
+      if (role !== "student" || role !== "professor" || role !=="admin") {
         res.status(400).json({ error: 'Invalid role' });
         return;
       }
