@@ -6,6 +6,7 @@ import { initializeDatabase } from './config/database';
 import { createUserRoutes } from './routes/user.routes';
 import { createCourseRoutes } from './routes/course.routes';
 import { createAssignmentRoutes } from './routes/assignment.routes';
+import { createGradeRoutes } from './routes/grade.routes';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ initializeDatabase();
 app.use('/api/users', createUserRoutes());
 app.use('/api/courses', createCourseRoutes());
 app.use('/api/assignments', createAssignmentRoutes());
+app.use('/api/grades', createGradeRoutes());
 
 // Health check
 app.get('/health', (req, res) => {

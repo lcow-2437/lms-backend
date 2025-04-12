@@ -83,7 +83,9 @@ interface AssignmentSubmissionAttributes {
   submission_file?: string;
   grade?: number;
   feedback?: string;
-  submitted_at?: Date;
+  graded_at?: Date;
+  graded_by?: number;
+  submitted_at: Date;
 }
 
 interface AssignmentSubmissionCreationAttributes extends Optional<AssignmentSubmissionAttributes, 'id' | 'submitted_at'> {}
@@ -97,6 +99,8 @@ class AssignmentSubmission extends Model<AssignmentSubmissionAttributes, Assignm
   public submission_file?: string;
   public grade?: number;
   public feedback?: string;
+  public graded_at?: Date;
+  public graded_by?: number;
   public readonly submitted_at!: Date;
 
   public readonly assignment?: Assignment;
@@ -137,10 +141,26 @@ AssignmentSubmission.init(
     grade: {
       type: DataTypes.FLOAT,
       allowNull: true,
+      validate: {
+        min: 0,
+        max: 100
+      }
     },
     feedback: {
       type: DataTypes.TEXT,
+      allowNull: true
+    },
+    graded_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    graded_by: {
+      type: DataTypes.INTEGER,
       allowNull: true,
+      references: {
+        model: User,
+        key: 'id'
+      }
     },
     submitted_at: {
       type: DataTypes.DATE,
@@ -162,7 +182,8 @@ Course.hasMany(Assignment, { foreignKey: 'course_id' });
 AssignmentSubmission.belongsTo(Assignment, { foreignKey: 'assignment_id' });
 Assignment.hasMany(AssignmentSubmission, { foreignKey: 'assignment_id' });
 
-AssignmentSubmission.belongsTo(User, { foreignKey: 'student_id' });
+AssignmentSubmission.belongsTo(User, { as: 'student', foreignKey: 'student_id' });
+AssignmentSubmission.belongsTo(User, { as: 'grader', foreignKey: 'graded_by' });
 User.hasMany(AssignmentSubmission, { foreignKey: 'student_id' });
 
 export { Assignment, AssignmentSubmission };
