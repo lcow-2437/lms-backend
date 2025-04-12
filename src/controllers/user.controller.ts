@@ -16,7 +16,7 @@ export class UserController {
 
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password, role, firstName, lastName } = req.body;
+      const { email, password, role, firstName, lastName } = req.body.firstName;
       console.log('Register attempt:', { email, password, role, firstName, lastName });
       if (role !== "student" || role !== "professor" || role !=="admin") {
         res.status(400).json({ error: 'Invalid role' });
