@@ -45,23 +45,24 @@ export class UserController {
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
+      console.log('Login attempt:', { email, password });
       const user = await this.userService.findUserByEmail(email);
-
+      console.log('User found:', user);
       if (!user) {
         res.status(401).json({ error: 'Invalid credentials' });
         return;
       }
-
+      console.log('Comparing passwords:', { inputPassword: password, storedPassword: user.password });
       const isMatch = await this.userService.comparePasswords(password, user.password);
       if (!isMatch) {
         res.status(401).json({ error: 'Invalid credentials' });
         return;
       }
-
+      console.log('Password match successful');
       const token = this.userService.generateToken(user);
-      res.json({ 
+      res.json({
         user: this.toUserResponse(user),
-        token 
+        token
       });
     } catch (error) {
       console.error(error);
