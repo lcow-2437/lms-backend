@@ -53,8 +53,7 @@ export class UserController {
         return;
       }
       console.log('Comparing passwords:', { inputPassword: password, storedPassword: user.password });
-      const isMatch = await this.userService.comparePasswords(password, user.password);
-      if (!isMatch) {
+      if (password !== user.password) {
         res.status(401).json({ error: 'Invalid credentials' });
         return;
       }
@@ -69,6 +68,7 @@ export class UserController {
       res.status(500).json({ error: 'Login failed' });
     }
   }
+ 
 
   async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
