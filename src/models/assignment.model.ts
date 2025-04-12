@@ -176,10 +176,25 @@ AssignmentSubmission.init(
 );
 
 // Define associations
-Assignment.belongsTo(Course, { foreignKey: 'course_id' });
-Course.hasMany(Assignment, { foreignKey: 'course_id' });
+// In assignment.model.ts, update these associations:
 
-AssignmentSubmission.belongsTo(Assignment, { foreignKey: 'assignment_id' });
+// Assignment belongsTo Course with explicit alias
+Assignment.belongsTo(Course, { 
+  foreignKey: 'course_id',
+  as: 'course'  // Explicit alias
+});
+
+// Course hasMany Assignments with explicit alias
+Course.hasMany(Assignment, {
+  foreignKey: 'course_id',
+  as: 'assignments'
+});
+
+// AssignmentSubmission belongsTo Assignment with explicit alias
+AssignmentSubmission.belongsTo(Assignment, {
+  foreignKey: 'assignment_id',
+  as: 'assignment'  // Explicit alias
+});
 Assignment.hasMany(AssignmentSubmission, { foreignKey: 'assignment_id' });
 
 AssignmentSubmission.belongsTo(User, { as: 'student', foreignKey: 'student_id' });

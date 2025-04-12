@@ -31,18 +31,19 @@ export class AssignmentService {
     submissionText: string,
     submissionFile?: string
   ): Promise<AssignmentSubmission> {
-    // Verify student is enrolled in the course
     const assignment = await Assignment.findByPk(assignmentId);
     if (!assignment) throw new Error('Assignment not found');
-
+  
+    // FIXED: Changed student_id to user_id
     const enrollment = await sequelize.models.course_student.findOne({
       where: {
         course_id: assignment.course_id,
-        student_id: studentId
+        user_id: studentId  // ← This is the critical fix
       }
     });
+    
     if (!enrollment) throw new Error('You are not enrolled in this course');
-
+  
     return await AssignmentSubmission.create({
       assignment_id: assignmentId,
       student_id: studentId,
@@ -59,20 +60,20 @@ export class AssignmentService {
   ): Promise<AssignmentSubmission> {
     const submission = await AssignmentSubmission.findByPk(submissionId, {
       include: [{
-        association: 'assignment',
+        association: 'assignment',  // Use the exact alias
         include: [{
-          association: 'course'
+          association: 'course'    // Use the exact alias
         }]
       }]
     });
-
+  
     if (!submission) throw new Error('Submission not found');
-    if (submission.assignment?.course?.professor_id !== professorId) {
+    if (!submission.assignment?.course || 
+        submission.assignment.course.professor_id !== professorId) {
       throw new Error('You are not authorized to grade this submission');
     }
-
-    await submission.update({ grade, feedback });
-    return submission;
+  
+    return await submission.update({ grade, feedback });
   }
 
   async getCourseAssignments(courseId: number, userId: number, role: string): Promise<Assignment[]> {

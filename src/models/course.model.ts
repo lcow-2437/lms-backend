@@ -83,26 +83,41 @@ const CourseStudent = sequelize.define('course_student', {
   course_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
+    allowNull: false, // Add this
     references: {
       model: Course,
       key: 'id',
-    },
+    }
   },
-  student_id: {
+  user_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
+    allowNull: false, // Add this
     references: {
       model: User,
       key: 'id',
-    },
+    }
   },
 }, {
   tableName: 'course_students',
   timestamps: false,
+  underscored: true
 });
 
-Course.belongsToMany(User, { through: CourseStudent, as: 'students' });
-User.belongsToMany(Course, { through: CourseStudent, as: 'enrolledCourses' });
+// Define associations
+Course.belongsToMany(User, { 
+  through: CourseStudent,
+  as: 'students',
+  foreignKey: 'course_id',    // matches your junction table
+  otherKey: 'user_id'         // was student_id, now user_id
+});
+
+User.belongsToMany(Course, { 
+  through: CourseStudent,
+  as: 'enrolledCourses',
+  foreignKey: 'user_id',      // was student_id
+  otherKey: 'course_id'
+});
 
 export default Course;
 export { CourseStudent };

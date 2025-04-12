@@ -66,95 +66,32 @@ export class CourseService {
   }
 
   async enrollStudent(courseId: number, studentId: number): Promise<{course: Course, student: User}> {
-    console.log(`Attempting to enroll student ${studentId} in course ${courseId}`);
-    
-    // Verify IDs are valid numbers
-    if (!courseId || !studentId) {
-      throw new Error('Invalid course or student ID');
+    // Add explicit validation
+    if (!studentId || isNaN(studentId)) {
+      throw new Error('Invalid student ID');
     }
   
-    // Verify course exists
-    const course = await Course.findByPk(courseId);
-    if (!course) {
-      throw new Error('Course not found');
-    }
-    console.log(`Found course: ${course.name} (ID: ${course.id})`);
-  
-    // Verify student exists and has student role
+    // Verify student exists first
     const student = await User.findOne({
       where: {
         id: studentId,
         role: UserRole.STUDENT
       }
     });
-  
+    
     if (!student) {
-      throw new Error('Student not found or user is not a student');
+      throw new Error('Student not found');
     }
-    console.log(`Found student: ${student.email} (ID: ${student.id})`);
-  
-    // Check if already enrolled
-    const enrollment = await CourseStudent.findOne({
-      where: {
-        course_id: courseId,
-        student_id: studentId
-      }
-    });
-  
-    if (enrollment) {
-      throw new Error('Student already enrolled in this course');
-    }
-    console.log('No existing enrollment found, proceeding to create enrollment');
   
     // Create enrollment
-    try {
-      // Print the course_student model structure to debug
-      console.log('course_student model structure:', 
-        Object.keys(this.sequelize.models.course_student.rawAttributes));
-      
-      console.log('Creating enrollment with:', {
-        course_id: courseId,
-        student_id: studentId
-      });
-      
-      // Try with direct SQL first to check if there's a raw DB issue
-      const [results, metadata] = await this.sequelize.query(`
-        INSERT INTO course_students (course_id, student_id) 
-        VALUES (?, ?)
-      `, {
-        replacements: [courseId, studentId]
-      });
-      
-      console.log('Raw SQL insert result:', { results, metadata });
-      
-      return { course, student };
-    } catch (err) {
-      console.error('Enrollment error details:', err);
-      if (err instanceof Error) {
-        console.error('Error message:', err.message);
-        console.error('Error stack:', err.stack);
-      }
-      
-      // Check if table exists
-      try {
-        const [tables] = await this.sequelize.query(`
-          SELECT table_name 
-          FROM information_schema.tables 
-          WHERE table_schema = DATABASE()
-        `);
-        console.log('Database tables:', tables);
-        
-        // Check table structure
-        const [columns] = await this.sequelize.query(`
-          SHOW COLUMNS FROM course_students
-        `);
-        console.log('course_students columns:', columns);
-      } catch (schemaErr) {
-        console.error('Error getting schema information:', schemaErr);
-      }
-      
-      throw new Error('Failed to enroll student');
-    }
+    await CourseStudent.create({
+      course_id: courseId,
+      user_id: studentId
+    });
+  
+    // Return fresh data
+    const course = await Course.findByPk(courseId);
+    return { course: course!, student };
   }
 
   async getCourseDetails(courseId: number): Promise<Course | null> {
