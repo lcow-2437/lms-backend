@@ -79,6 +79,13 @@ User.init(
     tableName: 'users',
     timestamps: true,
     underscored: true,
+    indexes: [
+      // Explicitly define only the indexes you need
+      {
+        unique: true,
+        fields: ['email']
+      },
+    ]
   }
 );
 
